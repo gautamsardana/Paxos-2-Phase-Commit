@@ -1,0 +1,7 @@
+1. Run proto file -
+    protoc --go_out=. --go-grpc_out=. common.proto
+
+
+
+
+

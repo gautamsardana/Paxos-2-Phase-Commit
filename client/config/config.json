@@ -1,0 +1,17 @@
+{
+  "port": "8000",
+  "server_addresses": [
+    "localhost:8080",
+    "localhost:8081",
+    "localhost:8082",
+    "localhost:8083",
+    "localhost:8084",
+    "localhost:8085",
+    "localhost:8086",
+    "localhost:8087",
+    "localhost:8088"
+  ],
+  "clusters": 3,
+  "cluster_size": 3,
+  "total_users": 3000
+}

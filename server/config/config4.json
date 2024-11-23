@@ -1,0 +1,24 @@
+{
+  "port": "8083",
+  "server_number": 4,
+  "majority": 2,
+  "db_creds": {
+    "dsn": "root@tcp(localhost:3306)/lab3_4?parseTime=true",
+    "host": "localhost",
+    "user": "root",
+    "password": ""
+  },
+  "shard_partition_length": 1000,
+  "server_addresses": [
+    "localhost:8000",
+    "localhost:8080",
+    "localhost:8081",
+    "localhost:8082",
+    "localhost:8083",
+    "localhost:8084",
+    "localhost:8085",
+    "localhost:8086",
+    "localhost:8087",
+    "localhost:8088"
+  ]
+}

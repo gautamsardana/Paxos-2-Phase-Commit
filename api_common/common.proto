@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/duration.proto";
+
+package common;
+
+option go_package = "/";
+
+service Paxos2PC {
+  rpc UpdateServerState(common.UpdateServerStateRequest) returns (google.protobuf.Empty);
+  rpc Callback(common.ProcessTxnResponse) returns (google.protobuf.Empty);
+
+  rpc EnqueueTxn(common.TxnRequest) returns (google.protobuf.Empty);
+  rpc ProcessTxnSet(common.TxnSet) returns (google.protobuf.Empty);
+  rpc Prepare(common.CommonRequest) returns (common.Promise);
+  rpc Accept(common.CommonRequest) returns (common.CommonRequest);
+  rpc Commit(common.CommonRequest) returns (google.protobuf.Empty);
+  rpc SyncRequest(common.Sync) returns (common.Sync);
+
+  rpc TwoPCCommit(common.TxnRequest) returns (common.ProcessTxnResponse);
+  rpc TwoPCAbort(common.TxnRequest) returns (common.ProcessTxnResponse);
+
+  rpc Performance(PerformanceRequest) returns (PerformanceResponse);
+  rpc PrintBalance(PrintBalanceRequest) returns (PrintBalanceResponse);
+  rpc PrintDB(PrintDBRequest) returns (PrintDBResponse);
+}
+
+message ClusterDistribution {
+  repeated int32 Values = 1;
+}
+
+message UpdateServerStateRequest{
+  bool IsAlive = 1;
+  int32 ClusterNumber = 2;
+  int32 DataItemsPerShard = 3;
+  map<int32, ClusterDistribution> Clusters = 4;
+}
+
+message TxnSet {
+  int32 SetNo = 1;
+  repeated TxnRequest Txns = 2;
+  repeated string LiveServers = 3;
+  repeated string ContactServers = 4;
+}
+
+message TxnRequest {
+  string TxnID = 1;
+  int32 Sender = 2;
+  int32 Receiver = 3;
+  float Amount = 4;
+  int32 Term = 5;
+  string Type = 6;
+  string Status = 7;
+  string Error = 8;
+}
+
+message ProcessTxnResponse {
+  TxnRequest Txn = 1;
+  string Status = 2;
+  string Error = 3;
+}
+
+message CommonRequest {
+  int32 Term = 1;
+  int32 LastCommittedTerm = 2;
+  int32 Server = 3;
+  TxnRequest TxnRequest = 4;
+}
+
+message Promise {
+  int32 Term = 1;
+  TxnRequest Txn = 2;
+  int32 AcceptNum = 3;
+  TxnRequest AcceptVal = 4;
+
+  repeated TxnRequest NewTxns = 5;
+  int32 LastCommittedTerm = 6;
+  int32 Server = 8;
+}
+
+message Sync {
+  int32 Server = 1;
+  int32 LastCommittedTerm = 2;
+  repeated TxnRequest NewTxns = 3;
+}
+
+message PerformanceRequest{
+  int32 Server = 1;
+}
+
+message PerformanceResponse{
+  google.protobuf.Duration Latency = 1;
+  float Throughput = 2;
+}
+
+message PrintBalanceRequest{
+  int32 Server = 1;
+  int32 User = 2;
+}
+
+message PrintBalanceResponse{
+  map<int32, float> Balance = 1;
+}
+
+message PrintDBRequest{
+  int32 Server = 1;
+}
+
+message PrintDBResponse{
+  repeated TxnRequest Txns = 1;
+}
