@@ -116,7 +116,6 @@ func main() {
 			fmt.Println("\nType 'next' to process the next set, " +
 				"'balance' to get balance, " +
 				"'db' to print database, " +
-				"'log' to print log," +
 				" or 'perf' to print performance")
 			scanner.Scan()
 			input := scanner.Text()

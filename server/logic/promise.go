@@ -1,12 +1,12 @@
 package logic
 
 import (
-	"GolandProjects/2pc-gautamsardana/server/storage/datastore"
 	"context"
 	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
 	"GolandProjects/2pc-gautamsardana/server/config"
+	"GolandProjects/2pc-gautamsardana/server/storage/datastore"
 )
 
 func Promise(ctx context.Context, conf *config.Config, req *common.CommonRequest) (*common.Promise, error) {

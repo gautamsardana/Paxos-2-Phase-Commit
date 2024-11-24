@@ -83,8 +83,8 @@ func ReceiveAccept(ctx context.Context, conf *config.Config, req *common.CommonR
 			if err != nil {
 				fmt.Println("Update transactionStatus error:", err)
 			}
-			conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 			ReleaseLock(conf, req.TxnRequest)
+			conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 		}
 	}()
 

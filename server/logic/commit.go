@@ -62,14 +62,16 @@ func SendCommit(ctx context.Context, conf *config.Config, acceptedRequests []*co
 				fmt.Println("Update transactionStatus error:", err)
 			}
 		}
-		conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 	}()
 
 	conf.PaxosLock.Lock()
-	conf.LastCommittedTerm = txnReq.Term
-	if conf.AcceptVal != nil && conf.AcceptVal.Transaction != nil &&
-		conf.AcceptVal.Transaction.TxnID == txnReq.TxnID {
-		conf.AcceptVal = nil
+	if txnReq.Type == TypeIntraShard {
+		conf.LastCommittedTerm = txnReq.Term
+
+		if conf.AcceptVal != nil && conf.AcceptVal.Transaction != nil &&
+			conf.AcceptVal.Transaction.TxnID == txnReq.TxnID {
+			conf.AcceptVal = nil
+		}
 	}
 	conf.PaxosLock.Unlock()
 
@@ -89,8 +91,8 @@ func ReceiveCommit(ctx context.Context, conf *config.Config, req *common.CommonR
 				fmt.Println("Update transactionStatus error:", err)
 			}
 		}
-		conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 		ReleaseLock(conf, req.TxnRequest)
+		conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 	}()
 
 	if req.Term <= conf.LastCommittedTerm {
@@ -104,10 +106,13 @@ func ReceiveCommit(ctx context.Context, conf *config.Config, req *common.CommonR
 	}
 
 	conf.PaxosLock.Lock()
-	conf.LastCommittedTerm = req.TxnRequest.Term
-	if conf.AcceptVal != nil && conf.AcceptVal.Transaction != nil &&
-		conf.AcceptVal.Transaction.TxnID == req.TxnRequest.TxnID {
-		conf.AcceptVal = nil
+	if req.TxnRequest.Type == TypeIntraShard {
+		conf.LastCommittedTerm = req.TxnRequest.Term
+
+		if conf.AcceptVal != nil && conf.AcceptVal.Transaction != nil &&
+			conf.AcceptVal.Transaction.TxnID == req.TxnRequest.TxnID {
+			conf.AcceptVal = nil
+		}
 	}
 	conf.PaxosLock.Unlock()
 

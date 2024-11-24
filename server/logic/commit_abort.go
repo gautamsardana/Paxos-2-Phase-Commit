@@ -22,6 +22,10 @@ func Commit(ctx context.Context, conf *config.Config, req *common.TxnRequest) (*
 		return FailureResponse(req, errors.New("txn id does not exist, invalid commit")), nil
 	}
 
+	if dbTxn.Status != StatusPreparedForCommit {
+		return FailureResponse(req, errors.New("invalid commit")), nil
+	}
+
 	dbTxn.Status = StatusCommitted
 	err = datastore.UpdateTransactionStatus(conf.DataStore, dbTxn)
 	if err != nil {
@@ -29,9 +33,10 @@ func Commit(ctx context.Context, conf *config.Config, req *common.TxnRequest) (*
 	}
 
 	conf.PaxosLock.Lock()
-	if req.Term > conf.LastCommittedTerm {
-		conf.LastCommittedTerm = req.Term
+	if dbTxn.Term > conf.LastCommittedTerm {
+		conf.LastCommittedTerm = dbTxn.Term
 	}
+
 	if conf.AcceptVal != nil && conf.AcceptVal.Transaction != nil &&
 		conf.AcceptVal.Transaction.TxnID == req.TxnID {
 		conf.AcceptVal = nil
@@ -51,6 +56,10 @@ func Abort(ctx context.Context, conf *config.Config, req *common.TxnRequest) (*c
 	dbTxn, err := datastore.GetTransactionByTxnID(conf.DataStore, req.TxnID)
 	if err != nil {
 		return FailureResponse(req, errors.New("txn id does not exist, invalid commit")), nil
+	}
+
+	if dbTxn.Status != StatusPreparedForCommit {
+		return FailureResponse(req, errors.New("invalid abort")), nil
 	}
 
 	err = RollbackTxn(conf, dbTxn)

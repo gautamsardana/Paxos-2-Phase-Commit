@@ -1,13 +1,13 @@
 package config
 
 import (
-	common "GolandProjects/2pc-gautamsardana/api_common"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"sync"
 
+	common "GolandProjects/2pc-gautamsardana/api_common"
 	serverPool "GolandProjects/2pc-gautamsardana/server_pool"
 )
 

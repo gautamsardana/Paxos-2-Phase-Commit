@@ -1,14 +1,14 @@
 package logic
 
 import (
-	common "GolandProjects/2pc-gautamsardana/api_common"
-	"GolandProjects/2pc-gautamsardana/client/config"
 	"context"
 	"fmt"
 	"github.com/google/uuid"
 	"log"
 	"math"
-	"sync"
+
+	common "GolandProjects/2pc-gautamsardana/api_common"
+	"GolandProjects/2pc-gautamsardana/client/config"
 )
 
 func ProcessTxnSet(ctx context.Context, req *common.TxnSet, conf *config.Config) error {
@@ -55,28 +55,22 @@ func ProcessTxnSet(ctx context.Context, req *common.TxnSet, conf *config.Config)
 
 	fmt.Println(req.Txns)
 
-	var wg sync.WaitGroup
 	for _, txn := range req.Txns {
-		wg.Add(1)
-		go func(txn *common.TxnRequest) {
-			defer wg.Done()
-			txnID, err := uuid.NewRandom()
-			if err != nil {
-				log.Fatalf("failed to generate UUID: %v", err)
-			}
-			txn.TxnID = txnID.String()
+		txnID, err := uuid.NewRandom()
+		if err != nil {
+			log.Fatalf("failed to generate UUID: %v", err)
+		}
+		txn.TxnID = txnID.String()
 
-			fmt.Println("processing", txn, "\n")
-			senderCluster := math.Ceil(float64(txn.Sender) / float64(conf.DataItemsPerShard))
-			receiverCluster := math.Ceil(float64(txn.Receiver) / float64(conf.DataItemsPerShard))
+		fmt.Println("processing", txn, "\n")
+		senderCluster := math.Ceil(float64(txn.Sender) / float64(conf.DataItemsPerShard))
+		receiverCluster := math.Ceil(float64(txn.Receiver) / float64(conf.DataItemsPerShard))
 
-			if senderCluster == receiverCluster {
-				ProcessIntraShardTxn(conf, txn, int32(senderCluster), req.ContactServers)
-			} else {
-				ProcessCrossShardTxn(conf, txn, int32(senderCluster), int32(receiverCluster), req.ContactServers)
-			}
-		}(txn)
+		if senderCluster == receiverCluster {
+			ProcessIntraShardTxn(conf, txn, int32(senderCluster), req.ContactServers)
+		} else {
+			ProcessCrossShardTxn(conf, txn, int32(senderCluster), int32(receiverCluster), req.ContactServers)
+		}
 	}
-	wg.Wait()
 	return nil
 }
