@@ -2,6 +2,24 @@
     protoc --go_out=. --go-grpc_out=. common.proto
 
 
+CREATE TABLE `user` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `user` int DEFAULT NULL,
+  `balance` double(10,2) DEFAULT '10.00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2006 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-
-
+CREATE TABLE `transaction` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `txn_id` varchar(255) NOT NULL,
+  `sender` int NOT NULL,
+  `receiver` int NOT NULL,
+  `amount` double(10,2) DEFAULT NULL,
+  `term` int DEFAULT NULL,
+  `type` varchar(255) NOT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `error` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_txnid` (`txn_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3494 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

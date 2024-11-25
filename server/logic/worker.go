@@ -36,9 +36,12 @@ func TransactionWorker(conf *config.Config) {
 
 			client.Callback(context.Background(), response)
 
+			//in case a txn gets executed because of acceptVal, we dont need to remove the original txn
 			conf.TxnQueueLock.Lock()
 			if len(conf.TxnQueue.Queue) > 1 {
-				conf.TxnQueue.Queue = conf.TxnQueue.Queue[1:]
+				if conf.TxnQueue.Queue[0].TxnID == response.Txn.TxnID {
+					conf.TxnQueue.Queue = conf.TxnQueue.Queue[1:]
+				}
 			} else {
 				conf.TxnQueue.Queue = make([]*common.TxnRequest, 0)
 			}
