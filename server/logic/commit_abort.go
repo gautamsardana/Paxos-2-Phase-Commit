@@ -58,14 +58,18 @@ func Abort(ctx context.Context, conf *config.Config, req *common.TxnRequest) (*c
 		return FailureResponse(req, errors.New("txn id does not exist, invalid commit")), nil
 	}
 
-	if dbTxn.Status != StatusPreparedForCommit {
-		return FailureResponse(req, errors.New("invalid abort")), nil
-	}
-
 	err = RollbackTxn(conf, dbTxn)
 	if err != nil {
 		return FailureResponse(req, err), nil
 	}
+
+	conf.PaxosLock.Lock()
+	if conf.AcceptVal != nil && conf.AcceptVal.Transaction != nil &&
+		conf.AcceptVal.Transaction.TxnID == req.TxnID {
+		conf.AcceptVal = nil
+	}
+	conf.PaxosLock.Unlock()
+
 	return RolledBackResponse(req), nil
 }
 

@@ -21,7 +21,7 @@ func SendAccept(ctx context.Context, conf *config.Config, promiseRequests []*com
 		if promiseReq.AcceptVal != nil && promiseReq.AcceptNum > maxAcceptNum {
 			acceptReq.TxnRequest = promiseReq.AcceptVal
 			maxAcceptNum = promiseReq.AcceptNum
-		} else {
+		} else if promiseReq.Txn != nil {
 			acceptReq.TxnRequest = promiseReq.Txn
 		}
 		servers = append(servers, promiseReq.Server)

@@ -41,7 +41,7 @@ func SendPrepare(ctx context.Context, conf *config.Config, req *common.TxnReques
 				prepareErr = err
 			}
 			if resp != nil {
-				fmt.Printf("received promise response from follower :%v", resp)
+				fmt.Printf("received promise response from follower :%v\n", resp)
 				if resp.NewTxns != nil {
 					err = AddNewTxns(ctx, conf, &common.Sync{
 						Server:            resp.Server,
