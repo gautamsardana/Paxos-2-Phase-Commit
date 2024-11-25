@@ -28,15 +28,15 @@ const (
 )
 
 var MapServerNumberToAddress = map[int32]string{
-	1: "localhost:8080",
-	2: "localhost:8081",
-	3: "localhost:8082",
-	4: "localhost:8083",
-	5: "localhost:8084",
-	6: "localhost:8085",
-	7: "localhost:8086",
-	8: "localhost:8087",
-	9: "localhost:8088",
+	1: "localhost:8081",
+	2: "localhost:8082",
+	3: "localhost:8083",
+	4: "localhost:8084",
+	5: "localhost:8085",
+	6: "localhost:8086",
+	7: "localhost:8087",
+	8: "localhost:8088",
+	9: "localhost:8089",
 }
 
 func ValidateBalance(conf *config.Config, req *common.TxnRequest) error {

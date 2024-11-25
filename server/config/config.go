@@ -16,12 +16,13 @@ import (
 )
 
 type Config struct {
-	Port                string `json:"port"`
-	ServerNumber        int32  `json:"server_number"`
-	ServerTotal         int32  `json:"server_total"`
-	Majority            int32  `json:"majority"`
+	BasePort            int32 `json:"base_port"`
+	Port                string
+	ServerNumber        int32 `json:"server_number"`
+	ServerTotal         int32 `json:"server_total"`
+	Majority            int32 `json:"majority"`
 	Balance             map[string]float32
-	DBCreds             DBCreds `json:"db_creds"`
+	DBDSN               string `json:"db_dsn"`
 	DataStore           *sql.DB
 	ServerAddresses     []string `json:"server_addresses"`
 	Pool                *serverPool.ServerPool
@@ -69,13 +70,6 @@ type User struct {
 	Balance float32
 }
 
-type DBCreds struct {
-	DSN      string `json:"dsn"`
-	Host     string `json:"host"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-}
-
 func InitiateConfig(conf *Config) {
 	InitiateServerPool(conf)
 	conf.MapClusterToServers = make(map[int32][]int32)
@@ -89,6 +83,7 @@ func InitiateConfig(conf *Config) {
 
 func GetConfig() *Config {
 	configPath := flag.String("config", "config.json", "Path to the configuration file")
+	serverNumber := flag.Int("server", 1, "Server number")
 	flag.Parse()
 	jsonConfig, err := os.ReadFile(*configPath)
 	if err != nil {
@@ -98,11 +93,16 @@ func GetConfig() *Config {
 	if err = json.Unmarshal(jsonConfig, conf); err != nil {
 		log.Fatal(err)
 	}
+
+	conf.ServerNumber = int32(*serverNumber)
+	conf.Port = fmt.Sprintf("%d", int(conf.BasePort)+*serverNumber)
+
+	conf.DBDSN = fmt.Sprintf(conf.DBDSN, conf.ServerNumber)
 	return conf
 }
 
 func SetupDB(config *Config) {
-	db, err := sql.Open("mysql", config.DBCreds.DSN)
+	db, err := sql.Open("mysql", config.DBDSN)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,17 +1,10 @@
 {
-  "port": "8085",
-  "server_number": 6,
+  "base_port": 8080,
   "majority": 2,
-  "db_creds": {
-    "dsn": "root@tcp(localhost:3306)/lab3_6?parseTime=true",
-    "host": "localhost",
-    "user": "root",
-    "password": ""
-  },
   "shard_partition_length": 1000,
+  "db_dsn": "root@tcp(localhost:3306)/lab3_%d?parseTime=true",
   "server_addresses": [
     "localhost:8000",
-    "localhost:8080",
     "localhost:8081",
     "localhost:8082",
     "localhost:8083",
@@ -19,6 +12,7 @@
     "localhost:8085",
     "localhost:8086",
     "localhost:8087",
-    "localhost:8088"
+    "localhost:8088",
+    "localhost:8089"
   ]
 }

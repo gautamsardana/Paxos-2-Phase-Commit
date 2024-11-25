@@ -14,15 +14,15 @@ const (
 )
 
 var mapServerToServerAddr = map[string]string{
-	"S1": "localhost:8080",
-	"S2": "localhost:8081",
-	"S3": "localhost:8082",
-	"S4": "localhost:8083",
-	"S5": "localhost:8084",
-	"S6": "localhost:8085",
-	"S7": "localhost:8086",
-	"S8": "localhost:8087",
-	"S9": "localhost:8088",
+	"S1": "localhost:8081",
+	"S2": "localhost:8082",
+	"S3": "localhost:8083",
+	"S4": "localhost:8084",
+	"S5": "localhost:8085",
+	"S6": "localhost:8086",
+	"S7": "localhost:8087",
+	"S8": "localhost:8088",
+	"S9": "localhost:8089",
 }
 
 var mapServerToServerNo = map[string]int32{
@@ -38,15 +38,15 @@ var mapServerToServerNo = map[string]int32{
 }
 
 var mapServerNoToServerAddr = map[int32]string{
-	1: "localhost:8080",
-	2: "localhost:8081",
-	3: "localhost:8082",
-	4: "localhost:8083",
-	5: "localhost:8084",
-	6: "localhost:8085",
-	7: "localhost:8086",
-	8: "localhost:8087",
-	9: "localhost:8088",
+	1: "localhost:8081",
+	2: "localhost:8082",
+	3: "localhost:8083",
+	4: "localhost:8084",
+	5: "localhost:8085",
+	6: "localhost:8086",
+	7: "localhost:8087",
+	8: "localhost:8088",
+	9: "localhost:8089",
 }
 
 func GetContactServerForCluster(conf *config.Config, cluster int32, contactServers []string) string {
