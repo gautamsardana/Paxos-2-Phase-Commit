@@ -39,9 +39,8 @@ type Config struct {
 	LastCommittedTerm int32
 	AcceptVal         *AcceptValInfo
 
-	TwoPCLock            sync.Mutex
-	ShardPartitionLength int32 `json:"shard_partition_length"`
-	UserLocks            []sync.Mutex
+	TwoPCLock sync.Mutex
+	UserLocks []sync.Mutex
 
 	TxnCount         int
 	LatencyQueue     []time.Duration
@@ -73,7 +72,6 @@ type User struct {
 func InitiateConfig(conf *Config) {
 	InitiateServerPool(conf)
 	conf.MapClusterToServers = make(map[int32][]int32)
-	conf.UserLocks = make([]sync.Mutex, conf.ShardPartitionLength)
 	conf.TxnQueue = &TxnQueueInfo{
 		Queue:    make([]*common.TxnRequest, 0),
 		Response: make(chan *common.ProcessTxnResponse, 1),

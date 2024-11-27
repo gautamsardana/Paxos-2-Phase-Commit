@@ -21,6 +21,7 @@ type Config struct {
 	TotalUsers          int32    `json:"total_users"`
 	DataItemsPerShard   int32
 	Pool                *serverPool.ServerPool
+	DBDSN               string `json:"db_dsn"`
 	MapClusterToServers map[int32][]int32
 
 	Lock         sync.Mutex
@@ -67,4 +68,17 @@ func InitiateClusters(conf *Config) {
 		}
 	}
 	fmt.Println(conf.MapClusterToServers)
+}
+
+func InitiateDB(conf *Config) {
+	for cluster, servers := range conf.MapClusterToServers {
+		userStart := (cluster-1)*conf.DataItemsPerShard + 1
+		userEnd := cluster * conf.DataItemsPerShard
+		for _, server := range servers {
+			go func() {
+				PopulateDB(conf.DBDSN, server, userStart, userEnd)
+			}()
+
+		}
+	}
 }

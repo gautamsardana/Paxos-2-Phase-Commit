@@ -16,6 +16,7 @@ func main() {
 	config.InitiateServerPool(conf)
 	config.InitiateConfig(conf)
 	config.InitiateClusters(conf)
+	config.InitiateDB(conf)
 	ListenAndServe(conf)
 }
 

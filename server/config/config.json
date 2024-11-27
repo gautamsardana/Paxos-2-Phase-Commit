@@ -1,7 +1,6 @@
 {
   "base_port": 8080,
   "majority": 2,
-  "shard_partition_length": 1000,
   "db_dsn": "root@tcp(localhost:3306)/lab3_%d?parseTime=true",
   "server_addresses": [
     "localhost:8000",

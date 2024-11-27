@@ -67,12 +67,12 @@ func GetTxnType(conf *config.Config, req *common.TxnRequest) {
 
 func AcquireLockWithAbort(conf *config.Config, req *common.TxnRequest) error {
 	if req.Type == TypeIntraShard || req.Type == TypeCrossShardSender {
-		if !conf.UserLocks[req.Sender%conf.ShardPartitionLength].TryLock() {
+		if !conf.UserLocks[req.Sender%conf.DataItemsPerShard].TryLock() {
 			return errors.New("lock not available for sender")
 		}
 	}
 	if req.Type == TypeIntraShard || req.Type == TypeCrossShardReceiver {
-		if !conf.UserLocks[req.Receiver%conf.ShardPartitionLength].TryLock() {
+		if !conf.UserLocks[req.Receiver%conf.DataItemsPerShard].TryLock() {
 			return errors.New("lock not available receiver")
 		}
 	}
@@ -81,20 +81,20 @@ func AcquireLockWithAbort(conf *config.Config, req *common.TxnRequest) error {
 
 func AcquireLock(conf *config.Config, req *common.TxnRequest) error {
 	if req.Type == TypeIntraShard || req.Type == TypeCrossShardSender {
-		conf.UserLocks[req.Sender%conf.ShardPartitionLength].Lock()
+		conf.UserLocks[req.Sender%conf.DataItemsPerShard].Lock()
 	}
 	if req.Type == TypeIntraShard || req.Type == TypeCrossShardReceiver {
-		conf.UserLocks[req.Receiver%conf.ShardPartitionLength].Lock()
+		conf.UserLocks[req.Receiver%conf.DataItemsPerShard].Lock()
 	}
 	return nil
 }
 
 func ReleaseLock(conf *config.Config, req *common.TxnRequest) {
 	if req.Type == TypeIntraShard || req.Type == TypeCrossShardSender {
-		conf.UserLocks[req.Sender%conf.ShardPartitionLength].Unlock()
+		conf.UserLocks[req.Sender%conf.DataItemsPerShard].Unlock()
 	}
 	if req.Type == TypeIntraShard || req.Type == TypeCrossShardReceiver {
-		conf.UserLocks[req.Receiver%conf.ShardPartitionLength].Unlock()
+		conf.UserLocks[req.Receiver%conf.DataItemsPerShard].Unlock()
 	}
 }
 

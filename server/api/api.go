@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"sync"
 	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
@@ -23,6 +24,8 @@ func (s *Server) UpdateServerState(ctx context.Context, req *common.UpdateServer
 	s.Config.DataItemsPerShard = req.DataItemsPerShard
 	s.Config.LatencyQueue = make([]time.Duration, 0)
 	s.Config.TxnCount = 0
+
+	s.Config.UserLocks = make([]sync.Mutex, s.Config.DataItemsPerShard)
 
 	for key, cluster := range req.Clusters {
 		s.Config.MapClusterToServers[key] = cluster.Values
