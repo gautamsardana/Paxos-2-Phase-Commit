@@ -23,10 +23,11 @@ func PopulateDB(dsn string, server, userStart, userEnd int32) {
 
 	for i := userStart; i <= userEnd; i++ {
 		query := `update user set balance = ? where user = ?`
-		_, err := db.Exec(query, 10, i)
-		if err != nil {
-			fmt.Println("Error inserting row:", err)
-		}
+		_, err = db.Exec(query, 10, i)
 	}
-	fmt.Printf("Done for db:%s\n", dsn)
+	if err != nil {
+		fmt.Println("Error inserting in db:", err)
+	} else {
+		fmt.Printf("Done for db:%s\n", dsn)
+	}
 }
