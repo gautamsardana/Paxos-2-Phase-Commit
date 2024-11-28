@@ -29,8 +29,8 @@ func PrintDB(client common.Paxos2PCClient, server int32) {
 	}
 }
 
-func Performance(client common.Paxos2PCClient, serverNo int32) {
-	resp, err := client.Performance(context.Background(), &common.PerformanceRequest{Server: serverNo})
+func Performance(client common.Paxos2PCClient) {
+	resp, err := client.Performance(context.Background(), nil)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

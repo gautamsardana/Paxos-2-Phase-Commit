@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"sync"
-	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
 	"GolandProjects/2pc-gautamsardana/server/config"
@@ -92,7 +91,6 @@ func ReceiveCommit(ctx context.Context, conf *config.Config, req *common.CommonR
 			}
 		}
 		ReleaseLock(conf, req.TxnRequest)
-		conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 	}()
 
 	if req.Term <= conf.LastCommittedTerm {

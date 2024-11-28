@@ -21,7 +21,7 @@ service Paxos2PC {
   rpc TwoPCCommit(common.TxnRequest) returns (common.ProcessTxnResponse);
   rpc TwoPCAbort(common.TxnRequest) returns (common.ProcessTxnResponse);
 
-  rpc Performance(PerformanceRequest) returns (PerformanceResponse);
+  rpc Performance(google.protobuf.Empty) returns (PerformanceResponse);
   rpc PrintBalance(PrintBalanceRequest) returns (PrintBalanceResponse);
   rpc PrintDB(PrintDBRequest) returns (PrintDBResponse);
 }
@@ -83,10 +83,6 @@ message Sync {
   int32 Server = 1;
   int32 LastCommittedTerm = 2;
   repeated TxnRequest NewTxns = 3;
-}
-
-message PerformanceRequest{
-  int32 Server = 1;
 }
 
 message PerformanceResponse{

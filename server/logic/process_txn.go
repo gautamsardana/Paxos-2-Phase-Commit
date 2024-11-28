@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
 	"GolandProjects/2pc-gautamsardana/server/config"
@@ -15,7 +14,6 @@ func EnqueueTxn(_ context.Context, conf *config.Config, req *common.TxnRequest) 
 	fmt.Printf("received enqueue txn request:%v\n", req)
 	conf.TxnQueueLock.Lock()
 	conf.TxnQueue.Queue = append(conf.TxnQueue.Queue, req)
-	conf.TxnCount++
 	conf.TxnQueueLock.Unlock()
 
 	if len(conf.TxnQueue.Queue) == 1 {
@@ -29,8 +27,6 @@ func ProcessTxn(ctx context.Context, conf *config.Config, req *common.TxnRequest
 	conf.PaxosLock.Lock()
 	conf.TermNumber++
 	conf.PaxosLock.Unlock()
-
-	conf.LatencyStartTime = time.Now()
 
 	req.Term = conf.TermNumber
 	GetTxnType(conf, req)

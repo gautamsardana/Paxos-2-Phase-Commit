@@ -41,10 +41,6 @@ type Config struct {
 
 	TwoPCLock sync.Mutex
 	UserLocks []sync.Mutex
-
-	TxnCount         int
-	LatencyQueue     []time.Duration
-	LatencyStartTime time.Time
 }
 
 type TxnQueueInfo struct {

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
 	serverPool "GolandProjects/2pc-gautamsardana/server_pool"
@@ -26,6 +27,10 @@ type Config struct {
 
 	Lock         sync.Mutex
 	TxnResponses map[string][]*common.ProcessTxnResponse
+
+	TxnQueueLock sync.Mutex
+	TxnStartTime map[string]time.Time
+	LatencyQueue []time.Duration
 }
 
 func GetConfig() *Config {
@@ -54,6 +59,8 @@ func InitiateServerPool(conf *Config) {
 
 func InitiateConfig(conf *Config) {
 	conf.TxnResponses = make(map[string][]*common.ProcessTxnResponse)
+	conf.TxnStartTime = make(map[string]time.Time)
+	conf.LatencyQueue = make([]time.Duration, 0)
 }
 
 func InitiateClusters(conf *Config) {

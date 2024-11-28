@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
 	"GolandProjects/2pc-gautamsardana/client/config"
@@ -12,6 +13,11 @@ import (
 func Callback(ctx context.Context, conf *config.Config, resp *common.ProcessTxnResponse) {
 	if resp.Txn.Type == TypeIntraShard {
 		fmt.Printf("received response for intra-shard txn: %v\n", resp)
+
+		conf.TxnQueueLock.Lock()
+		conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.TxnStartTime[resp.Txn.TxnID]))
+		conf.TxnQueueLock.Unlock()
+
 		return
 	}
 

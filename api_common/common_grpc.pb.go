@@ -49,7 +49,7 @@ type Paxos2PCClient interface {
 	SyncRequest(ctx context.Context, in *Sync, opts ...grpc.CallOption) (*Sync, error)
 	TwoPCCommit(ctx context.Context, in *TxnRequest, opts ...grpc.CallOption) (*ProcessTxnResponse, error)
 	TwoPCAbort(ctx context.Context, in *TxnRequest, opts ...grpc.CallOption) (*ProcessTxnResponse, error)
-	Performance(ctx context.Context, in *PerformanceRequest, opts ...grpc.CallOption) (*PerformanceResponse, error)
+	Performance(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PerformanceResponse, error)
 	PrintBalance(ctx context.Context, in *PrintBalanceRequest, opts ...grpc.CallOption) (*PrintBalanceResponse, error)
 	PrintDB(ctx context.Context, in *PrintDBRequest, opts ...grpc.CallOption) (*PrintDBResponse, error)
 }
@@ -162,7 +162,7 @@ func (c *paxos2PCClient) TwoPCAbort(ctx context.Context, in *TxnRequest, opts ..
 	return out, nil
 }
 
-func (c *paxos2PCClient) Performance(ctx context.Context, in *PerformanceRequest, opts ...grpc.CallOption) (*PerformanceResponse, error) {
+func (c *paxos2PCClient) Performance(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*PerformanceResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PerformanceResponse)
 	err := c.cc.Invoke(ctx, Paxos2PC_Performance_FullMethodName, in, out, cOpts...)
@@ -206,7 +206,7 @@ type Paxos2PCServer interface {
 	SyncRequest(context.Context, *Sync) (*Sync, error)
 	TwoPCCommit(context.Context, *TxnRequest) (*ProcessTxnResponse, error)
 	TwoPCAbort(context.Context, *TxnRequest) (*ProcessTxnResponse, error)
-	Performance(context.Context, *PerformanceRequest) (*PerformanceResponse, error)
+	Performance(context.Context, *emptypb.Empty) (*PerformanceResponse, error)
 	PrintBalance(context.Context, *PrintBalanceRequest) (*PrintBalanceResponse, error)
 	PrintDB(context.Context, *PrintDBRequest) (*PrintDBResponse, error)
 	mustEmbedUnimplementedPaxos2PCServer()
@@ -249,7 +249,7 @@ func (UnimplementedPaxos2PCServer) TwoPCCommit(context.Context, *TxnRequest) (*P
 func (UnimplementedPaxos2PCServer) TwoPCAbort(context.Context, *TxnRequest) (*ProcessTxnResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TwoPCAbort not implemented")
 }
-func (UnimplementedPaxos2PCServer) Performance(context.Context, *PerformanceRequest) (*PerformanceResponse, error) {
+func (UnimplementedPaxos2PCServer) Performance(context.Context, *emptypb.Empty) (*PerformanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Performance not implemented")
 }
 func (UnimplementedPaxos2PCServer) PrintBalance(context.Context, *PrintBalanceRequest) (*PrintBalanceResponse, error) {
@@ -460,7 +460,7 @@ func _Paxos2PC_TwoPCAbort_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _Paxos2PC_Performance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PerformanceRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -472,7 +472,7 @@ func _Paxos2PC_Performance_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: Paxos2PC_Performance_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(Paxos2PCServer).Performance(ctx, req.(*PerformanceRequest))
+		return srv.(Paxos2PCServer).Performance(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

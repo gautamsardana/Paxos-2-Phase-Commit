@@ -2,7 +2,10 @@ package logic
 
 import (
 	"context"
+	"fmt"
+	"google.golang.org/protobuf/types/known/durationpb"
 	"math"
+	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
 	"GolandProjects/2pc-gautamsardana/client/config"
@@ -44,15 +47,23 @@ func PrintDB(ctx context.Context, req *common.PrintDBRequest, conf *config.Confi
 	return resp, nil
 }
 
-func Performance(ctx context.Context, req *common.PerformanceRequest, conf *config.Config) (*common.PerformanceResponse, error) {
-	serverAddr := mapServerNoToServerAddr[req.Server]
-	server, err := conf.Pool.GetServer(serverAddr)
-	if err != nil {
-		return nil, err
+func Performance(_ context.Context, conf *config.Config) (*common.PerformanceResponse, error) {
+	fmt.Println(conf.LatencyQueue)
+
+	var totalLatency time.Duration
+	completedTxns := len(conf.LatencyQueue)
+	for i := 0; i < completedTxns; i++ {
+		totalLatency += conf.LatencyQueue[i]
 	}
-	resp, err := server.Performance(ctx, req)
-	if err != nil {
-		return nil, err
+
+	var throughput float64
+	if totalLatency > 0 {
+		throughput = float64(completedTxns) / totalLatency.Seconds()
+	}
+
+	resp := &common.PerformanceResponse{
+		Latency:    durationpb.New(totalLatency),
+		Throughput: float32(throughput),
 	}
 	return resp, nil
 }

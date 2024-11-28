@@ -1,11 +1,11 @@
 package logic
 
 import (
-	common "GolandProjects/2pc-gautamsardana/api_common"
-	"GolandProjects/2pc-gautamsardana/server/config"
 	"context"
 	"fmt"
-	"time"
+
+	common "GolandProjects/2pc-gautamsardana/api_common"
+	"GolandProjects/2pc-gautamsardana/server/config"
 )
 
 func ProcessNextTxn(conf *config.Config) {
@@ -30,7 +30,6 @@ func TransactionWorker(conf *config.Config) {
 
 			client, err := conf.Pool.GetServer(GetClientAddress())
 			if err != nil {
-				conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 				fmt.Println(err)
 			}
 
@@ -48,8 +47,6 @@ func TransactionWorker(conf *config.Config) {
 
 			conf.TxnQueue.Signal <- struct{}{}
 			conf.TxnQueueLock.Unlock()
-
-			conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 		}
 	}
 }

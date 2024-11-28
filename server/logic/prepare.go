@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
 	"GolandProjects/2pc-gautamsardana/server/config"
@@ -78,8 +77,6 @@ func ReceivePrepare(ctx context.Context, conf *config.Config, req *common.Common
 		return nil, errors.New("server not alive")
 	}
 
-	conf.LatencyStartTime = time.Now()
-
 	if req.Term <= conf.TermNumber {
 		req.Term = conf.TermNumber + 1
 		req.TxnRequest.Term = req.Term
@@ -99,7 +96,6 @@ func ReceivePrepare(ctx context.Context, conf *config.Config, req *common.Common
 			if err != nil {
 				fmt.Println("Update transactionStatus error:", err)
 			}
-			conf.LatencyQueue = append(conf.LatencyQueue, time.Since(conf.LatencyStartTime))
 		}
 	}()
 

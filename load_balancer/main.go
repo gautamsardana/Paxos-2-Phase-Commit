@@ -137,11 +137,7 @@ func main() {
 				PrintBalance(client, int32(user))
 
 			} else if input == "perf" {
-				fmt.Println("Which server? (eg. '1' without quotes)")
-				scanner.Scan()
-				serverNoString := scanner.Text()
-				serverNo, _ := strconv.Atoi(serverNoString)
-				Performance(client, int32(serverNo))
+				Performance(client)
 
 			} else {
 				fmt.Println("Unknown command")
