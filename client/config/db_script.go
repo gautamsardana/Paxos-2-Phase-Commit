@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"strings"
 )
 
 func PopulateDB(dsn string, server, userStart, userEnd int32) {
@@ -12,22 +13,32 @@ func PopulateDB(dsn string, server, userStart, userEnd int32) {
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	queries := []string{
+		"DELETE FROM transaction",
+		"DELETE FROM user",
+	}
+	for _, query := range queries {
+		if _, err := db.Exec(query); err != nil {
+			log.Printf("Error executing query '%s': %v", query, err)
+		}
 	}
 
-	query := `delete from transaction`
-	_, err = db.Exec(query)
-	if err != nil {
-		fmt.Println("Error deleting:", err)
-	}
-
+	var placeholders []string
+	var values []interface{}
 	for i := userStart; i <= userEnd; i++ {
-		query := `update user set balance = ? where user = ?`
-		_, err = db.Exec(query, 10, i)
+		placeholders = append(placeholders, "(?, ?)")
+		values = append(values, i, 10)
+
+		query := fmt.Sprintf("INSERT INTO user (user, balance) VALUES %s", strings.Join(placeholders, ","))
+		if _, err := db.Exec(query, values...); err != nil {
+			log.Printf("Error inserting users: %v", err)
+		}
+		placeholders = nil
+		values = nil
 	}
-	if err != nil {
-		fmt.Println("Error inserting in db:", err)
-	} else {
-		fmt.Printf("Done for db:%s\n", dsn)
-	}
+	fmt.Printf("Done populating database for server %d at DSN: %s\n", server, dsn)
 }
