@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"sync"
-	"time"
 
 	common "GolandProjects/2pc-gautamsardana/api_common"
 	"GolandProjects/2pc-gautamsardana/server/config"
@@ -22,8 +21,8 @@ func (s *Server) UpdateServerState(ctx context.Context, req *common.UpdateServer
 	s.Config.IsAlive = req.IsAlive
 	s.Config.ClusterNumber = req.ClusterNumber
 	s.Config.DataItemsPerShard = req.DataItemsPerShard
-	s.Config.LatencyQueue = make([]time.Duration, 0)
-	s.Config.TxnCount = 0
+	//s.Config.LatencyQueue = make([]time.Duration, 0)
+	//s.Config.TxnCount = 0
 
 	s.Config.UserLocks = make([]sync.Mutex, s.Config.DataItemsPerShard)
 
@@ -114,7 +113,7 @@ func (s *Server) PrintDB(ctx context.Context, req *common.PrintDBRequest) (*comm
 }
 
 func (s *Server) Performance(ctx context.Context, req *common.PerformanceRequest) (*common.PerformanceResponse, error) {
-	fmt.Printf("Server %d: received PrintLogs request\n", s.Config.ServerNumber)
+	fmt.Printf("Server %d: received Performance request\n", s.Config.ServerNumber)
 	resp := logic.Performance(ctx, s.Config, req)
 	return resp, nil
 }
